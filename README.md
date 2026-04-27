@@ -1,16 +1,50 @@
-# React + Vite
+# Tournament Betting System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Сайт для онлайн-турниров со ставками.
 
-Currently, two official plugins are available:
+## Возможности проекта
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Регистрация пользователей
+- Авторизация
+- Создание турниров
+- Автоматическая турнирная сетка
+- Создание команд
+- Матчи и результаты
+- Ставки
+- Внутренняя валюта сайта
+- Админ панель
 
-## React Compiler
+## Технологии
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Backend
+- Node.js
+- Express.js
+- PostgreSQL
 
-## Expanding the ESLint configuration
+### Frontend
+- React
+- Vite
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Структура проекта
+
+Tournament_Betting/
+backend/
+frontend/
+
+## Запуск проекта
+
+### Backend
+
+cd backend  
+npm install  
+npm run dev
+
+### Frontend
+
+cd frontend  
+npm install  
+npm run dev
+
+## Автор
+
+Учебный проект по базам данных с дальнейшим развитием до дипломной работы.
