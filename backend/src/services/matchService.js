@@ -34,8 +34,46 @@ const getTournamentMatchesService = async (tournamentId) => {
 
   return result.rows;
 };
+const updateMatchResultService = async ({
+  matchId,
+  team1_score,
+  team2_score,
+}) => {
+  const matchResult = await pool.query(
+    "SELECT * FROM matches WHERE id = $1",
+    [matchId]
+  );
+
+  if (matchResult.rows.length === 0) {
+    throw new Error("Match not found");
+  }
+
+  const match = matchResult.rows[0];
+
+  let winner_team_id = null;
+
+  if (team1_score > team2_score) {
+    winner_team_id = match.team1_id;
+  } else if (team2_score > team1_score) {
+    winner_team_id = match.team2_id;
+  }
+
+  const result = await pool.query(
+    `UPDATE matches
+     SET team1_score = $1,
+         team2_score = $2,
+         winner_team_id = $3,
+         status = 'finished'
+     WHERE id = $4
+     RETURNING *`,
+    [team1_score, team2_score, winner_team_id, matchId]
+  );
+
+  return result.rows[0];
+};
 
 module.exports = {
   createMatchService,
   getTournamentMatchesService,
+  updateMatchResultService
 };

@@ -31,8 +31,27 @@ const getTournamentMatches = async (req, res) => {
     });
   }
 };
+const { updateMatchResultService } = require("../services/matchService");
 
+const updateMatchResult = async (req, res) => {
+  try {
+    const match = await updateMatchResultService({
+      matchId: req.params.id,
+      ...req.body,
+    });
+
+    res.status(200).json({
+      message: "Match result updated",
+      match,
+    });
+  } catch (error) {
+    res.status(400).json({
+      message: error.message,
+    });
+  }
+};
 module.exports = {
   createMatch,
   getTournamentMatches,
+  updateMatchResult
 };
