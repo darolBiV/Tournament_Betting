@@ -2,15 +2,17 @@ const express = require("express");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
 require("dotenv").config();
-
 const pool = require("./config/db");
+const tournamentRoutes = require("./routes/tournamentRoutes");
+
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-
 app.use("/api/auth", authRoutes);
+app.use("/api/tournaments", tournamentRoutes);
+
 
 app.get("/", async (req, res) => {
   try {

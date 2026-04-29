@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS wallets CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS roles CASCADE;
+DROP TABLE IF EXISTS tournaments CASCADE;
 
 CREATE TABLE roles (
     id SERIAL PRIMARY KEY,
@@ -21,6 +22,16 @@ CREATE TABLE wallets (
     user_id INTEGER NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
     balance NUMERIC(10, 2) NOT NULL DEFAULT 0 CHECK (balance >= 0),
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE tournaments (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    description TEXT,
+    max_teams INTEGER NOT NULL CHECK (max_teams >= 2),
+    status VARCHAR(30) NOT NULL DEFAULT 'planned',
+    created_by INTEGER NOT NULL REFERENCES users(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 INSERT INTO roles (name)
