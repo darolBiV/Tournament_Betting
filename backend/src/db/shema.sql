@@ -5,6 +5,8 @@ DROP TABLE IF EXISTS tournaments CASCADE;
 DROP TABLE IF EXISTS team_members CASCADE;
 DROP TABLE IF EXISTS teams CASCADE;
 DROP TABLE IF EXISTS matches CASCADE;
+DROP TABLE IF EXISTS bets CASCADE;
+DROP TABLE IF EXISTS transactions CASCADE;
 
 DROP TABLE IF EXISTS tournament_teams CASCADE;
 
@@ -87,6 +89,26 @@ CREATE TABLE matches (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     CHECK (team1_id IS NULL OR team2_id IS NULL OR team1_id <> team2_id)
+);
+CREATE TABLE bets (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    match_id INTEGER NOT NULL REFERENCES matches(id) ON DELETE CASCADE,
+    team_id INTEGER NOT NULL REFERENCES teams(id),
+    amount NUMERIC(10, 2) NOT NULL CHECK (amount > 0),
+    coefficient NUMERIC(5, 2) NOT NULL DEFAULT 2.00 CHECK (coefficient > 0),
+    status VARCHAR(30) NOT NULL DEFAULT 'pending',
+    potential_win NUMERIC(10, 2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE transactions (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    type VARCHAR(30) NOT NULL,
+    amount NUMERIC(10, 2) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 INSERT INTO roles (name)
 VALUES 
