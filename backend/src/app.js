@@ -7,6 +7,7 @@ const tournamentRoutes = require("./routes/tournamentRoutes");
 const teamRoutes = require("./routes/teamRoutes");
 const tournamentTeamRoutes = require("./routes/tournamentTeamRoutes");
 const matchRoutes = require("./routes/matchRoutes");
+const bracketRoutes = require("./routes/bracketRoutes");
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use("/api/tournaments", tournamentRoutes);
 app.use("/api/teams", teamRoutes);
 app.use("/api/tournament-teams", tournamentTeamRoutes);
 app.use("/api/matches", matchRoutes);
+app.use("/api/brackets", bracketRoutes);
 
 app.get("/", async (req, res) => {
   try {

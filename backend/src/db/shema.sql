@@ -64,15 +64,29 @@ CREATE TABLE tournament_teams (
 CREATE TABLE matches (
     id SERIAL PRIMARY KEY,
     tournament_id INTEGER NOT NULL REFERENCES tournaments(id) ON DELETE CASCADE,
-    team1_id INTEGER NOT NULL REFERENCES teams(id),
-    team2_id INTEGER NOT NULL REFERENCES teams(id),
+
+    team1_id INTEGER REFERENCES teams(id),
+    team2_id INTEGER REFERENCES teams(id),
+
     team1_score INTEGER DEFAULT 0 CHECK (team1_score >= 0),
     team2_score INTEGER DEFAULT 0 CHECK (team2_score >= 0),
+
     status VARCHAR(30) NOT NULL DEFAULT 'scheduled',
+
     winner_team_id INTEGER REFERENCES teams(id),
+
+    round_number INTEGER NOT NULL DEFAULT 1,
+    match_order INTEGER NOT NULL DEFAULT 1,
+    bracket_type VARCHAR(30) NOT NULL DEFAULT 'upper',
+    best_of INTEGER NOT NULL DEFAULT 1,
+
+    next_match_id INTEGER REFERENCES matches(id),
+    next_match_slot INTEGER CHECK (next_match_slot IN (1, 2)),
+
     match_date TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CHECK (team1_id <> team2_id)
+
+    CHECK (team1_id IS NULL OR team2_id IS NULL OR team1_id <> team2_id)
 );
 INSERT INTO roles (name)
 VALUES 

@@ -56,9 +56,11 @@ const updateMatchResultService = async ({
     winner_team_id = match.team1_id;
   } else if (team2_score > team1_score) {
     winner_team_id = match.team2_id;
+  } else {
+    throw new Error("Draw is not allowed in this tournament format");
   }
 
-  const result = await pool.query(
+  const updatedMatchResult = await pool.query(
     `UPDATE matches
      SET team1_score = $1,
          team2_score = $2,
@@ -69,7 +71,25 @@ const updateMatchResultService = async ({
     [team1_score, team2_score, winner_team_id, matchId]
   );
 
-  return result.rows[0];
+  const updatedMatch = updatedMatchResult.rows[0];
+
+  if (updatedMatch.next_match_id && updatedMatch.next_match_slot) {
+    const slotColumn =
+      updatedMatch.next_match_slot === 1 ? "team1_id" : "team2_id";
+
+    await pool.query(
+      `UPDATE matches
+       SET ${slotColumn} = $1,
+           status = CASE
+             WHEN team1_id IS NOT NULL OR $2 = 1 THEN status
+             ELSE status
+           END
+       WHERE id = $3`,
+      [winner_team_id, updatedMatch.next_match_slot, updatedMatch.next_match_id]
+    );
+  }
+
+  return updatedMatch;
 };
 
 module.exports = {
