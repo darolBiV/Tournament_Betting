@@ -1,4 +1,5 @@
 const pool = require("../config/db");
+const { settleBetsForMatchService } = require("./betService");
 
 const createMatchService = async ({
   tournament_id,
@@ -34,6 +35,7 @@ const getTournamentMatchesService = async (tournamentId) => {
 
   return result.rows;
 };
+
 const updateMatchResultService = async ({
   matchId,
   team1_score,
@@ -73,27 +75,31 @@ const updateMatchResultService = async ({
 
   const updatedMatch = updatedMatchResult.rows[0];
 
+  const settledBetsCount = await settleBetsForMatchService(
+    updatedMatch.id,
+    updatedMatch.winner_team_id
+  );
+
   if (updatedMatch.next_match_id && updatedMatch.next_match_slot) {
     const slotColumn =
       updatedMatch.next_match_slot === 1 ? "team1_id" : "team2_id";
 
     await pool.query(
       `UPDATE matches
-       SET ${slotColumn} = $1,
-           status = CASE
-             WHEN team1_id IS NOT NULL OR $2 = 1 THEN status
-             ELSE status
-           END
-       WHERE id = $3`,
-      [winner_team_id, updatedMatch.next_match_slot, updatedMatch.next_match_id]
+       SET ${slotColumn} = $1
+       WHERE id = $2`,
+      [winner_team_id, updatedMatch.next_match_id]
     );
   }
 
-  return updatedMatch;
+  return {
+    ...updatedMatch,
+    settled_bets_count: settledBetsCount,
+  };
 };
 
 module.exports = {
   createMatchService,
   getTournamentMatchesService,
-  updateMatchResultService
+  updateMatchResultService,
 };

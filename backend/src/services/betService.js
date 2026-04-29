@@ -91,8 +91,79 @@ const getUserBetsService = async (user_id) => {
 
   return result.rows;
 };
+const settleBetsForMatchService = async (matchId, winnerTeamId) => {
+  const client = await pool.connect();
 
+  try {
+    await client.query("BEGIN");
+
+    const betsResult = await client.query(
+      `SELECT * FROM bets
+       WHERE match_id = $1 AND status = 'pending'
+       FOR UPDATE`,
+      [matchId]
+    );
+
+    for (const bet of betsResult.rows) {
+      if (bet.team_id === winnerTeamId) {
+        await client.query(
+          `UPDATE bets
+           SET status = 'won'
+           WHERE id = $1`,
+          [bet.id]
+        );
+
+        await client.query(
+          `UPDATE wallets
+           SET balance = balance + $1,
+               updated_at = CURRENT_TIMESTAMP
+           WHERE user_id = $2`,
+          [bet.potential_win, bet.user_id]
+        );
+
+        await client.query(
+          `INSERT INTO transactions (user_id, type, amount, description)
+           VALUES ($1, $2, $3, $4)`,
+          [
+            bet.user_id,
+            "bet_win",
+            bet.potential_win,
+            `Win from bet ${bet.id} on match ${matchId}`,
+          ]
+        );
+      } else {
+        await client.query(
+          `UPDATE bets
+           SET status = 'lost'
+           WHERE id = $1`,
+          [bet.id]
+        );
+
+        await client.query(
+          `INSERT INTO transactions (user_id, type, amount, description)
+           VALUES ($1, $2, $3, $4)`,
+          [
+            bet.user_id,
+            "bet_lost",
+            bet.amount,
+            `Lost bet ${bet.id} on match ${matchId}`,
+          ]
+        );
+      }
+    }
+
+    await client.query("COMMIT");
+
+    return betsResult.rows.length;
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+};
 module.exports = {
   createBetService,
   getUserBetsService,
+  settleBetsForMatchService
 };
