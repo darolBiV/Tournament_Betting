@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS roles CASCADE;
 DROP TABLE IF EXISTS tournaments CASCADE;
 DROP TABLE IF EXISTS team_members CASCADE;
 DROP TABLE IF EXISTS teams CASCADE;
+DROP TABLE IF EXISTS matches CASCADE;
 
 DROP TABLE IF EXISTS tournament_teams CASCADE;
 
@@ -59,6 +60,19 @@ CREATE TABLE tournament_teams (
     team_id INTEGER NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
     joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(tournament_id, team_id)
+);
+CREATE TABLE matches (
+    id SERIAL PRIMARY KEY,
+    tournament_id INTEGER NOT NULL REFERENCES tournaments(id) ON DELETE CASCADE,
+    team1_id INTEGER NOT NULL REFERENCES teams(id),
+    team2_id INTEGER NOT NULL REFERENCES teams(id),
+    team1_score INTEGER DEFAULT 0 CHECK (team1_score >= 0),
+    team2_score INTEGER DEFAULT 0 CHECK (team2_score >= 0),
+    status VARCHAR(30) NOT NULL DEFAULT 'scheduled',
+    winner_team_id INTEGER REFERENCES teams(id),
+    match_date TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CHECK (team1_id <> team2_id)
 );
 INSERT INTO roles (name)
 VALUES 

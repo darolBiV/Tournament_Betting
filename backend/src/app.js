@@ -6,6 +6,7 @@ const pool = require("./config/db");
 const tournamentRoutes = require("./routes/tournamentRoutes");
 const teamRoutes = require("./routes/teamRoutes");
 const tournamentTeamRoutes = require("./routes/tournamentTeamRoutes");
+const matchRoutes = require("./routes/matchRoutes");
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/tournaments", tournamentRoutes);
 app.use("/api/teams", teamRoutes);
 app.use("/api/tournament-teams", tournamentTeamRoutes);
+app.use("/api/matches", matchRoutes);
 
 app.get("/", async (req, res) => {
   try {
