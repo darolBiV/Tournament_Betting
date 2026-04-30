@@ -16,23 +16,33 @@ function RegisterPage() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      const res = await api.post("/auth/register", form);
-      console.log(res.data);
-      alert("Registered successfully");
-    } catch (err) {
-        if (err.response?.data?.errors) {
-          const errors = err.response.data.errors
-          .map((e) => e.msg)
-          .join("\n");
-          alert(errors);
-      } else {
-          alert(err.response?.data?.message || "Error");
+  try {
+    await api.post("/auth/register", form);
+
+    // сразу логинимся
+    const res = await api.post("/auth/login", {
+      email: form.email,
+      password: form.password,
+    });
+
+    localStorage.setItem("token", res.data.token);
+
+    // редирект
+    window.location.href = "/dashboard";
+
+  } catch (err) {
+    if (err.response?.data?.errors) {
+      const errors = err.response.data.errors
+        .map((e) => e.msg)
+        .join("\n");
+      alert(errors);
+    } else {
+      alert(err.response?.data?.message || "Error");
+    }
   }
-}
-  };
+};
 
   return (
     <div>

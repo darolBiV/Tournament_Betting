@@ -8,6 +8,9 @@ import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
 import TournamentsPage from "./pages/TournamentsPage";
 import ProfilePage from "./pages/ProfilePage";
+import TeamsPage from "./pages/TeamsPage";
+import MatchesPage from "./pages/MatchesPage";
+import BetsPage from "./pages/BetsPage";
 
 function App() {
   return (
@@ -20,6 +23,9 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/tournaments" element={<TournamentsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/teams" element={<TeamsPage />} />
+          <Route path="/matches" element={<MatchesPage />} />
+          <Route path="/bets" element={<BetsPage />} />
         </Routes>
       </Layout>
     </BrowserRouter>

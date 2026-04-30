@@ -11,12 +11,15 @@ function Navbar() {
   return (
     <nav className="navbar">
       <div className="navbar-logo">
-        Tournament Betting
+        <Link to="/">Tournament Betting</Link>
       </div>
 
       <div className="navbar-links">
         <Link to="/">Home</Link>
         <Link to="/tournaments">Tournaments</Link>
+        <Link to="/teams">Teams</Link>
+        <Link to="/matches">Matches</Link>
+        <Link to="/bets">Bets</Link>
 
         {token && (
           <>

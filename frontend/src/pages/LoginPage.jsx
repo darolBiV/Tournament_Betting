@@ -16,16 +16,18 @@ function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
     try {
       const res = await api.post("/auth/login", form);
 
       localStorage.setItem("token", res.data.token);
 
-      alert("Login successful");
+      // ВАЖНО
+      window.location.href = "/dashboard";
+
     } catch (err) {
       alert(err.response?.data?.message || "Error");
-    }
+      }
   };
 
   return (
