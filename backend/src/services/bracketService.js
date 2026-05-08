@@ -5,7 +5,7 @@ const shuffleTeams = (teams) => {
   return [...teams].sort(() => Math.random() - 0.5);
 };
 
-const generateBracketService = async ({ tournamentId, bestOf = 1 }) => {
+const generateBracketService = async ({ tournamentId, bestOf = 1, createdBy }) => {
   const teamsResult = await pool.query(
     `SELECT teams.*
      FROM tournament_teams
@@ -33,9 +33,9 @@ const generateBracketService = async ({ tournamentId, bestOf = 1 }) => {
 
     const result = await pool.query(
       `INSERT INTO matches 
-       (tournament_id, team1_id, team2_id, round_number, match_order, bracket_type, best_of)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
-       RETURNING *`,
+      (tournament_id, team1_id, team2_id, round_number, match_order, bracket_type, best_of, created_by)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      RETURNING *`,
       [
         tournamentId,
         team1 ? team1.id : null,
@@ -44,6 +44,7 @@ const generateBracketService = async ({ tournamentId, bestOf = 1 }) => {
         i + 1,
         "upper",
         bestOf,
+        createdBy,
       ]
     );
 
@@ -60,10 +61,10 @@ const generateBracketService = async ({ tournamentId, bestOf = 1 }) => {
     for (let i = 0; i < matchesCount; i++) {
       const result = await pool.query(
         `INSERT INTO matches 
-         (tournament_id, round_number, match_order, bracket_type, best_of, status)
-         VALUES ($1, $2, $3, $4, $5, $6)
-         RETURNING *`,
-        [tournamentId, roundNumber, i + 1, "upper", bestOf, "pending"]
+        (tournament_id, round_number, match_order, bracket_type, best_of, status, created_by)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        RETURNING *`,
+        [tournamentId, roundNumber, i + 1, "upper", bestOf, "pending", createdBy]
       );
 
       currentRoundMatches.push(result.rows[0]);

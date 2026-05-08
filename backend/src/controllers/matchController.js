@@ -5,7 +5,10 @@ const {
 
 const createMatch = async (req, res) => {
   try {
-    const match = await createMatchService(req.body);
+    const match = await createMatchService({
+      ...req.body,
+      created_by: req.user.id,
+    });
 
     res.status(201).json({
       message: "Match created successfully",

@@ -5,6 +5,7 @@ const generateBracket = async (req, res) => {
     const result = await generateBracketService({
       tournamentId: req.params.tournamentId,
       bestOf: req.body.best_of || 1,
+      createdBy: req.user.id,
     });
 
     res.status(201).json(result);

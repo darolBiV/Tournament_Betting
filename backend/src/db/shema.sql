@@ -87,6 +87,7 @@ CREATE TABLE matches (
 
     match_date TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INTEGER REFERENCES users(id),
 
     CHECK (team1_id IS NULL OR team2_id IS NULL OR team1_id <> team2_id)
 );

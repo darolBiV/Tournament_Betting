@@ -6,12 +6,13 @@ const createMatchService = async ({
   team1_id,
   team2_id,
   match_date,
+  created_by,
 }) => {
   const result = await pool.query(
-    `INSERT INTO matches (tournament_id, team1_id, team2_id, match_date)
-     VALUES ($1, $2, $3, $4)
+    `INSERT INTO matches (tournament_id, team1_id, team2_id, match_date, created_by)
+     VALUES ($1, $2, $3, $4, $5)
      RETURNING *`,
-    [tournament_id, team1_id, team2_id, match_date]
+    [tournament_id, team1_id, team2_id, match_date, created_by]
   );
 
   return result.rows[0];
