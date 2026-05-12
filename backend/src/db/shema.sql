@@ -7,9 +7,9 @@ DROP TABLE IF EXISTS teams CASCADE;
 DROP TABLE IF EXISTS matches CASCADE;
 DROP TABLE IF EXISTS bets CASCADE;
 DROP TABLE IF EXISTS transactions CASCADE;
-
 DROP TABLE IF EXISTS tournament_teams CASCADE;
-
+DROP TABLE IF EXISTS match_user_roles CASCADE;
+DROP TABLE IF EXISTS tournament_user_roles CASCADE;
 CREATE TABLE roles (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE
@@ -111,8 +111,34 @@ CREATE TABLE transactions (
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE tournament_user_roles (
+    id SERIAL PRIMARY KEY,
+    tournament_id INTEGER NOT NULL REFERENCES tournaments(id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    role VARCHAR(50) NOT NULL,
+    assigned_by INTEGER REFERENCES users(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(tournament_id, user_id, role)
+);
+
+CREATE TABLE match_user_roles (
+    id SERIAL PRIMARY KEY,
+    match_id INTEGER NOT NULL REFERENCES matches(id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    role VARCHAR(50) NOT NULL,
+    assigned_by INTEGER REFERENCES users(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(match_id, user_id, role)
+);
 INSERT INTO roles (name)
 VALUES 
     ('user'),
     ('admin');
+INSERT INTO roles (name)
+VALUES ('super_admin')
+ON CONFLICT (name) DO NOTHING;
+
+UPDATE users
+SET role_id = (SELECT id FROM roles WHERE name = 'super_admin')
+WHERE email = 'aleksandrfitlovskij@gmail.com';
 SELECT * FROM roles;

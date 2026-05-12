@@ -38,7 +38,10 @@ const registerUserService = async ({ username, email, password }) => {
 
 const loginUserService = async ({ email, password }) => {
   const result = await pool.query(
-    "SELECT * FROM users WHERE email = $1",
+    `SELECT users.*, roles.name AS role
+     FROM users
+     JOIN roles ON users.role_id = roles.id
+     WHERE users.email = $1`,
     [email]
   );
 
@@ -58,6 +61,7 @@ const loginUserService = async ({ email, password }) => {
     {
       id: user.id,
       role_id: user.role_id,
+      role: user.role,
     },
     process.env.JWT_SECRET,
     {
@@ -72,6 +76,7 @@ const loginUserService = async ({ email, password }) => {
       username: user.username,
       email: user.email,
       role_id: user.role_id,
+      role: user.role,
     },
   };
 };

@@ -1,7 +1,7 @@
 const pool = require("../config/db");
 
 const shuffleTeams = (teams) => {
-  // TODO: later replace random shuffle with custom seeding logic
+  // TODO: later replace random shuffle with custom seeding logic(позже добавим норм логику )
   return [...teams].sort(() => Math.random() - 0.5);
 };
 
